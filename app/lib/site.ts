@@ -8,7 +8,6 @@ export const site = {
   nav: [
     { label: "Work", href: "/#work" },
     { label: "About", href: "/#about" },
-    { label: "Process", href: "/#process" },
     { label: "Skills", href: "/#skills" },
     { label: "Contact", href: "/#contact" },
   ],
