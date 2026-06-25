@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Radhika Sharma — UX Portfolio
 
-## Getting Started
+A premium, dark, minimal portfolio for **Radhika Sharma, UI/UX Designer**. Built as a
+high-end, editorial single-page experience with reusable case study pages.
 
-First, run the development server:
+## Tech stack
+
+- **Next.js 16** (App Router, Turbopack)
+- **TypeScript**
+- **Tailwind CSS v4** (CSS-first `@theme` config in `app/globals.css`)
+- **Framer Motion** (page load, scroll reveals, hover, cursor glow)
+- **Lucide React** icons
+- **next/font** (Inter, Space Grotesk, Instrument Serif)
+
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open the printed local URL (defaults to `http://localhost:3000`).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Other scripts:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build   # production build
+npm run start   # serve the production build
+npm run lint    # eslint
+```
 
-## Learn More
+## Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+app/
+  layout.tsx            # fonts, metadata, dark theme shell
+  globals.css           # design tokens, utilities, animations
+  page.tsx              # landing page (composes all sections)
+  components/           # Navbar, Hero, About, SelectedWork, ProjectCard,
+                        # Process, Skills, Contact, Footer, Reveal, CursorGlow…
+  lib/
+    projects.ts         # case study content (single source of truth)
+    site.ts             # name, role, email, links
+  work/[slug]/page.tsx  # reusable case study template
+public/
+  resume.pdf            # placeholder — replace with the real resume
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Sections
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Hero · About · Selected Work · Design Process · Experience & Skills · Contact,
+plus a reusable case study template at `/work/[slug]` for each project
+(Buyer Web App, Carbon Wallet, Partner Dashboard, Virtual Field Tour).
 
-## Deploy on Vercel
+## Customising
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Content / case studies:** edit `app/lib/projects.ts`.
+- **Contact details & nav:** edit `app/lib/site.ts`.
+- **Colors, fonts, glow:** edit the tokens at the top of `app/globals.css`.
+- **Real images:** the large gradient placeholders live in `ProjectCard.tsx` and
+  the case study hero — swap them for `next/image` when assets are ready.
+- **Resume:** replace `public/resume.pdf`.
+```
