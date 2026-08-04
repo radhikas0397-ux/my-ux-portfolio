@@ -1,0 +1,6 @@
+# Local-only Python inpainting environment and caches — never deploy these
+.venv-inpaint/
+.cache/
+__pycache__/
+*.pyc
+scripts/

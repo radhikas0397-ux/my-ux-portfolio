@@ -23,12 +23,12 @@ export type AvatarLayerConfig = {
 
 /** Default paths — swap `base` when your avatar asset is ready */
 export const AVATAR_LAYERS: AvatarLayerConfig = {
-  base: "/Images/hero-portrait-blend.png",
-  // hair: "/Images/hero-avatar/hair.png",
-  // blink: "/Images/hero-avatar/blink.png",
-  // smile: "/Images/hero-avatar/smile.png",
-  // hand: "/Images/hero-avatar/hand.png",
-  // pupils: "/Images/hero-avatar/pupils.png",
+  base: "/images/hero-portrait-blend.png",
+  // hair: "/images/hero-avatar/hair.png",
+  // blink: "/images/hero-avatar/blink.png",
+  // smile: "/images/hero-avatar/smile.png",
+  // hand: "/images/hero-avatar/hand.png",
+  // pupils: "/images/hero-avatar/pupils.png",
 };
 
 /** Percentage-based anchors for CSS fallback eye tracking (no pupil layer) */

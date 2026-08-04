@@ -70,7 +70,7 @@ function PortraitFrame() {
         className="panel-glow glow-ring relative aspect-[4/5] overflow-hidden rounded-[30px] will-change-transform transition-shadow duration-500 group-hover/portrait:shadow-[0_28px_70px_-22px_rgba(94,234,212,0.28)]"
       >
         <Image
-          src="/Images/hero-section.jpeg"
+          src="/images/hero-section.jpeg"
           alt={`${site.name}, Product Designer`}
           fill
           sizes="(max-width: 1024px) 90vw, 40vw"
