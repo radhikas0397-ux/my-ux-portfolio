@@ -1,24 +1,35 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk, Instrument_Serif } from "next/font/google";
+import { Cormorant_Garamond } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
+import "./responsive.css";
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
+const satoshi = localFont({
+  src: [
+    {
+      path: "./fonts/satoshi/Satoshi-Regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "./fonts/satoshi/Satoshi-Medium.woff2",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "./fonts/satoshi/Satoshi-Bold.woff2",
+      weight: "700",
+      style: "normal",
+    },
+  ],
+  variable: "--font-satoshi",
   display: "swap",
 });
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
-  display: "swap",
-});
-
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-instrument-serif",
-  weight: "400",
-  style: ["normal", "italic"],
-  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-cormorant",
   display: "swap",
 });
 
@@ -41,8 +52,7 @@ export const metadata: Metadata = {
   authors: [{ name: "Radhika Sharma" }],
   openGraph: {
     title: "Radhika Sharma — UI/UX Designer",
-    description:
-      "Less confusion. More impact.",
+    description: "Less confusion. More impact.",
     type: "website",
   },
 };
@@ -56,9 +66,10 @@ export default function RootLayout({
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${inter.variable} ${spaceGrotesk.variable} ${instrumentSerif.variable} h-full antialiased`}
+      className={`${satoshi.variable} ${cormorant.variable} h-full bg-background antialiased`}
+      style={{ colorScheme: "dark" }}
     >
-      <body className="min-h-full bg-background text-foreground font-sans selection:text-white">
+      <body className="min-h-full bg-background font-sans text-foreground selection:bg-accent/30 selection:text-foreground">
         {children}
       </body>
     </html>

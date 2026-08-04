@@ -2,20 +2,73 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X, ArrowUpRight } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { site } from "../lib/site";
 
-export function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
+const SECTION_IDS = ["home", "about", "work", "contact"];
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+function NavLink({
+  href,
+  label,
+  activeLink,
+  transparent,
+  onClick,
+  className = "",
+  ariaLabel,
+}: {
+  href: string;
+  label: string;
+  activeLink: boolean;
+  transparent: boolean;
+  onClick?: () => void;
+  className?: string;
+  ariaLabel?: string;
+}) {
+  const isExternal = href.startsWith("/") && !href.startsWith("/#");
+  const linkClass = `${
+    transparent ? "type-nav-art" : "type-nav"
+  } relative transition-colors ${className} ${
+    transparent
+      ? activeLink
+        ? "text-[var(--foreground)]"
+        : "text-[var(--nav)] hover:text-[var(--foreground)]"
+      : activeLink
+        ? "text-foreground"
+        : "text-[var(--nav)] hover:text-foreground"
+  }`;
+
+  if (isExternal) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={ariaLabel}
+        onClick={onClick}
+        className={linkClass}
+      >
+        {label}
+      </a>
+    );
+  }
+
+  return (
+    <Link href={href} onClick={onClick} className={linkClass}>
+      {label}
+    </Link>
+  );
+}
+
+export function Navbar() {
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState("home");
+  const [scrolled, setScrolled] = useState(false);
+
+  const onHome = pathname === "/";
+  const transparent = onHome && !scrolled;
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -24,73 +77,110 @@ export function Navbar() {
     };
   }, [open]);
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 48);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    if (pathname !== "/") return;
+
+    const sections = SECTION_IDS.map((id) =>
+      document.getElementById(id),
+    ).filter(Boolean) as HTMLElement[];
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]?.target.id) {
+          setActive(visible[0].target.id);
+        }
+      },
+      { rootMargin: "-40% 0px -45% 0px", threshold: [0, 0.25, 0.5] },
+    );
+
+    sections.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [pathname]);
+
+  const isActive = (href: string) => {
+    if (href.startsWith("/") && !href.startsWith("/#")) return false;
+    const id = href.replace("/#", "");
+    if (pathname !== "/") return false;
+    return active === id;
+  };
+
   return (
     <>
-      <motion.header
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.7, ease: [0.21, 0.47, 0.32, 0.98] }}
-        className="fixed inset-x-0 top-0 z-50"
+      <header
+        className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-300 ${
+          transparent
+            ? "border-b border-transparent bg-transparent"
+            : "navbar-solid border-b"
+        }`}
       >
-        <div className="container-narrow">
+        {transparent && (
           <div
-            className={`relative mt-3 flex items-center justify-between rounded-full px-3 py-2 transition-all duration-500 sm:px-4 ${
-              scrolled
-                ? "border border-line bg-surface/70 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.6)] backdrop-blur-xl"
-                : "border border-transparent bg-transparent"
+            aria-hidden
+            className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#10120F]/80 via-[#10120F]/35 to-transparent"
+          />
+        )}
+        <div
+          className={`navbar-inner relative flex h-14 items-center sm:h-16 ${
+            transparent
+              ? "navbar-inner--transparent justify-center px-6 md:px-8"
+              : "container-shell justify-between"
+          }`}
+        >
+          <Link
+            href="/#home"
+            onClick={() => setOpen(false)}
+            className={`navbar-logo-link group flex items-center gap-3 ${
+              transparent ? "navbar-logo-link--hero" : ""
+            }`}
+            aria-label="Home"
+          >
+            <span className="navbar-logo type-caption grid h-9 w-9 place-items-center rounded-full font-semibold normal-case tracking-normal">
+              RS
+            </span>
+          </Link>
+
+          <nav
+            className={`hidden items-center md:flex ${
+              transparent ? "gap-8 lg:gap-10" : "ml-auto gap-6 lg:gap-8"
             }`}
           >
-            <Link
-              href="/"
-              className="group flex items-center gap-2.5 pl-1"
-              onClick={() => setOpen(false)}
-            >
-              <span className="grid h-8 w-8 place-items-center rounded-lg bg-foreground font-display text-xs font-bold tracking-tight text-background transition-transform duration-300 group-hover:scale-105">
-                RS
-              </span>
-              <span className="hidden text-[13px] font-semibold tracking-tight sm:block">
-                {site.name}
-              </span>
-            </Link>
+            {site.nav.map((item) => (
+              <NavLink
+                key={item.href}
+                href={item.href}
+                label={item.label}
+                activeLink={isActive(item.href)}
+                transparent={transparent}
+                ariaLabel={"ariaLabel" in item ? item.ariaLabel : undefined}
+              />
+            ))}
+          </nav>
 
-            <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 md:flex">
-              {site.nav.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="nav-underline rounded-lg px-3.5 py-2 text-[13px] font-medium text-muted transition-colors duration-300 hover:text-foreground"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
-
-            <div className="flex items-center gap-2">
-              <Link
-                href="/#contact"
-                className="group hidden items-center gap-1.5 rounded-full bg-foreground px-4 py-2 text-[13px] font-semibold text-background transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_30px_-12px_rgba(255,255,255,0.5)] md:inline-flex"
-              >
-                Let&apos;s talk
-                <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </Link>
-
-              <button
-                type="button"
-                aria-label="Toggle menu"
-                aria-expanded={open}
-                onClick={() => setOpen((v) => !v)}
-                className="grid h-10 w-10 place-items-center rounded-full border border-line-strong bg-surface-2 md:hidden"
-              >
-                {open ? (
-                  <X className="h-5 w-5" />
-                ) : (
-                  <Menu className="h-5 w-5" />
-                )}
-              </button>
-            </div>
-          </div>
+          <button
+            type="button"
+            aria-label="Toggle menu"
+            aria-expanded={open}
+            onClick={() => setOpen((v) => !v)}
+            className={`navbar-menu-toggle grid place-items-center md:hidden ${
+              transparent
+                ? "text-[var(--foreground)]"
+                : "rounded-lg border border-line text-foreground"
+            }`}
+          >
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
-      </motion.header>
+      </header>
 
       <AnimatePresence>
         {open && (
@@ -98,35 +188,27 @@ export function Navbar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-40 bg-background/95 backdrop-blur-xl md:hidden"
+            className="navbar-mobile-panel mobile-menu fixed inset-0 z-40 bg-[var(--surface-2)] backdrop-blur-sm md:hidden"
           >
-            <nav className="container-shell flex h-full flex-col justify-center gap-2 pb-20">
+            <nav className="mobile-menu-nav flex h-full w-full flex-col justify-start gap-1 pb-20">
               {site.nav.map((item, i) => (
                 <motion.div
                   key={item.href}
-                  initial={{ opacity: 0, x: -20 }}
+                  initial={{ opacity: 0, x: -16 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.05 * i + 0.1 }}
+                  transition={{ delay: 0.05 * i + 0.08 }}
                 >
-                  <Link
+                  <NavLink
                     href={item.href}
+                    label={item.label}
+                    activeLink={isActive(item.href)}
+                    transparent={false}
                     onClick={() => setOpen(false)}
-                    className="block border-b border-line py-5 font-display text-3xl font-medium tracking-tight"
-                  >
-                    {item.label}
-                  </Link>
+                    className="type-nav block border-b border-line"
+                    ariaLabel={"ariaLabel" in item ? item.ariaLabel : undefined}
+                  />
                 </motion.div>
               ))}
-              <motion.a
-                href={`mailto:${site.email}`}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.05 * site.nav.length + 0.1 }}
-                className="mt-8 text-lg text-accent"
-              >
-                {site.email}
-              </motion.a>
             </nav>
           </motion.div>
         )}
