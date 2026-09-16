@@ -6,14 +6,37 @@ type Variant = "desktop" | "mobile";
 export function ProjectScreenPreview({
   project,
   variant,
+  fit = "cover",
 }: {
   project: Project;
   variant: Variant;
+  /**
+   * "cover" (default) fills the frame and may crop.
+   * "contain" shows the whole artwork (no cropping) over a blurred,
+   * same-image backdrop so device mockups are never trimmed.
+   */
+  fit?: "cover" | "contain";
 }) {
   const { desktop, mobile } = project.mockups;
   const src = variant === "desktop" ? desktop : mobile ?? desktop;
 
   if (src) {
+    if (fit === "contain") {
+      // Full artwork, contained so the device is never cropped. The tile's
+      // own background field fills any area the artwork doesn't cover.
+      return (
+        <Image
+          src={src}
+          alt={project.mockups.alt ?? `${project.title} preview`}
+          fill
+          unoptimized
+          quality={100}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 60vw, 40vw"
+          className="service-card-image service-card-image--contain"
+        />
+      );
+    }
+
     return (
       <Image
         src={src}

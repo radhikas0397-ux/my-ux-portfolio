@@ -50,7 +50,7 @@ export const projects: Project[] = [
     gradient: "from-indigo-500/30 via-violet-500/20 to-sky-500/20",
     accent: "#a78bfa",
     mockups: {
-      desktop: "/images/projects/buyer-dashboard-card.png",
+      desktop: "/images/projects/buyer-dashboard-card-transparent.png",
       cover: "/images/projects/buyer-dashboard-cover-desktop.webp",
       coverMobile: "/images/projects/buyer-dashboard-cover-mobile.webp",
       coverAspect: "16/9",
@@ -236,7 +236,7 @@ export const projects: Project[] = [
     gradient: "from-fuchsia-500/30 via-purple-500/20 to-rose-500/15",
     accent: "#e879f9",
     mockups: {
-      desktop: "/images/projects/virtual-field-tour-card.png",
+      desktop: "/images/projects/virtual-field-tour-card-transparent.png",
       cover: "/images/projects/carbon-project-virtual-tour-flat.png",
       alt: "Carbon Project Virtual Tour flat illustration cover",
     },

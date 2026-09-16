@@ -1195,104 +1195,103 @@ select:-webkit-autofill {
     }
   }
 
-  /* Horizontal scroll track (Featured Projects) */
-  .services-scroll-outer {
-    padding-left: max(
-      var(--container-inline),
-      calc((100vw - var(--container-max)) / 2 + var(--container-inline))
-    );
-    padding-right: var(--container-inline);
+  /* ==========================================================================
+     Featured Projects — colourful editorial bento grid
+     ========================================================================== */
+  .bento-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
   }
 
-  .services-scroll-track {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    align-items: stretch;
-    scroll-padding-left: max(
-      var(--container-inline),
-      calc((100vw - var(--container-max)) / 2 + var(--container-inline))
-    );
-  }
-  .services-scroll-track::-webkit-scrollbar {
-    display: none;
-  }
+  /* Tablet: balanced grid with a full-width intro highlight */
+  @media (min-width: 640px) {
+    .bento-grid {
+      gap: 1.25rem;
+      grid-template-columns: 1fr 1fr;
+      grid-template-areas:
+        "intro    intro"
+        "featured project4"
+        "farmer   buyer";
+    }
 
-  .service-card {
-    display: flex;
-    flex-direction: column;
-    width: 380px;
-    max-width: 380px;
-    min-height: 100%;
-    height: auto;
-    border-radius: 24px;
-    border: 1px solid var(--border);
-    background: var(--card);
-    overflow: hidden;
-    box-shadow: none;
-    transition:
-      transform 300ms ease,
-      border-color 300ms ease,
-      background-color 300ms ease;
-  }
-
-  @media (min-width: 1024px) {
-    .service-card {
-      width: 450px;
-      max-width: 450px;
+    .bento-card,
+    .bento-intro {
+      grid-area: var(--bento-area);
     }
   }
 
-  .service-card:hover {
-    transform: translateY(-6px);
-    background: var(--surface-hover);
-    border-color: var(--border-hover);
-    box-shadow: var(--shadow-elevated);
+  /* Desktop: asymmetric bento inspired by the reference composition.
+     Row 1: featured | intro (wide) | project4
+     Row 2: featured | farmer       | buyer (wide) */
+  @media (min-width: 1024px) {
+    .bento-grid {
+      gap: 1.25rem;
+      grid-template-columns: 1.3fr 0.92fr 0.92fr 1.02fr;
+      grid-template-rows: auto auto;
+      grid-template-areas:
+        "featured intro   intro   project4"
+        "featured farmer  buyer   buyer";
+    }
   }
 
-  .service-card-image-wrap {
+  /* --- Project tiles ------------------------------------------------------- */
+  .bento-card {
+    position: relative;
+    border-radius: 22px;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    background: linear-gradient(155deg, var(--tile-from), var(--tile-to));
+    overflow: hidden;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
+    transition:
+      transform 450ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 450ms ease,
+      box-shadow 450ms ease;
+  }
+
+  .bento-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(255, 255, 255, 0.24);
+    box-shadow: 0 22px 46px -12px rgba(0, 0, 0, 0.55);
+  }
+
+  .bento-card-link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .bento-card-media {
     position: relative;
     width: 100%;
-    height: 340px;
-    flex-shrink: 0;
-    overflow: hidden;
-    margin: 0;
-    padding: 0;
-    border-radius: 0;
-    background: transparent;
-  }
-
-  .service-card-body {
-    display: flex;
     flex: 1 1 auto;
-    flex-direction: column;
-    min-height: 11.5rem;
-  }
-
-  .service-card-title {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    overflow: hidden;
-    min-height: 2.6em;
-  }
-
-  .service-card-category {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
-    line-clamp: 1;
+    min-height: 190px;
     overflow: hidden;
   }
 
-  .service-card-preview {
+  .bento-card-preview {
     position: absolute;
     inset: 0;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
     overflow: hidden;
+  }
+
+  /* Soft light bloom that fades in on hover */
+  .bento-card-glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(
+      circle at 50% 0%,
+      rgba(255, 255, 255, 0.22),
+      transparent 62%
+    );
+    transition: opacity 450ms ease;
+  }
+
+  .bento-card:hover .bento-card-glow {
+    opacity: 1;
   }
 
   .service-card-image {
@@ -1305,19 +1304,436 @@ select:-webkit-autofill {
     transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .service-card:hover .service-card-image {
+  .bento-card:hover .service-card-image {
     transform: scale(1.06);
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .service-card:hover {
+  /* Laptop artwork cards: the whole tile IS the artwork — the device sits
+     directly on its own teal / lavender field, always fully visible and
+     never cropped, never boxed inside another frame. */
+  .service-card-image--contain {
+    object-fit: contain;
+    object-position: center center;
+    transform: none;
+  }
+
+  /* Never zoom the contained artwork on hover — it must stay fully visible. */
+  .bento-card:hover .service-card-image--contain {
+    transform: none;
+  }
+
+  .bento-card-body {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    padding: 1.35rem 1.5rem 1.5rem;
+    color: var(--tile-ink);
+  }
+
+  .bento-card-num {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.2em;
+    color: var(--tile-glow);
+  }
+
+  /* Elegant serif titles, matching the section heading. */
+  .bento-card-title {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: clamp(1.55rem, 0.9vw + 1.3rem, 2rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--tile-ink);
+  }
+
+  .bento-card-category {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.4;
+    color: var(--tile-sub);
+  }
+
+  .bento-card-desc {
+    display: none;
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: var(--tile-sub);
+  }
+
+  .bento-card-cta {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 0.875rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--tile-glow);
+    opacity: 0.95;
+    transition: opacity 0.2s ease;
+  }
+
+  .bento-card:hover .bento-card-cta {
+    opacity: 1;
+  }
+
+  /* Hero tiles (featured + wide) — larger editorial typography. */
+  .bento-card--featured .bento-card-title,
+  .bento-card--wide .bento-card-title {
+    font-size: clamp(2rem, 1.4vw + 1.5rem, 2.65rem);
+    line-height: 1.04;
+  }
+
+  .bento-card--featured .bento-card-category,
+  .bento-card--wide .bento-card-category {
+    font-size: 1.1rem;
+  }
+
+  .bento-card--featured .bento-card-desc,
+  .bento-card--wide .bento-card-desc {
+    font-size: 1.1rem;
+    line-height: 1.5;
+  }
+
+  /* Laptop artwork tiles — media matches the 3:2 artwork so the device and
+     its own background read as ONE composition (no crop, no inner box). The
+     field colours are sampled from the artworks so any edge blends in. */
+  .bento-card--featured .bento-card-media,
+  .bento-card--wide .bento-card-media {
+    aspect-ratio: 1024 / 682;
+    min-height: 0;
+    flex: 0 0 auto;
+  }
+
+  .bento-card--featured .bento-card-media {
+    /* Taller top visual so the Carbon Project Virtual Tour hero gets more
+       prominence; the body below flexes to keep the card balanced. */
+    aspect-ratio: 1024 / 900;
+    /* Clean solid teal from the card's palette — no texture or image behind
+       the laptop mockup. */
+    background: #159389;
+  }
+
+  /* Re-add a soft grounding shadow for the (now transparent) laptop mockup so
+     it still sits naturally on the solid field. Featured card only. */
+  .bento-card--featured .service-card-image {
+    filter: drop-shadow(0 16px 24px rgba(4, 40, 34, 0.42));
+  }
+
+  .bento-card--wide .bento-card-media {
+    background: radial-gradient(140% 140% at 50% 45%, #958ec4 0%, #8a84b8 62%, #7d78a8 100%);
+  }
+
+  /* Featured — large vertical hero tile: full teal composition on top,
+     content panel below (content vertically centred in the tall panel). */
+  @media (min-width: 1024px) {
+    .bento-card--featured .bento-card-body {
+      flex: 1 1 auto;
+      justify-content: center;
+      padding: 1.75rem 1.95rem 1.95rem;
+    }
+
+    .bento-card--featured .bento-card-title {
+      font-size: clamp(2.3rem, 1.6vw + 1.7rem, 3rem);
+    }
+
+    .bento-card--featured .bento-card-desc {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      line-clamp: 3;
+      overflow: hidden;
+    }
+  }
+
+  /* Wide — horizontal split: full laptop on a lavender field (left),
+     rich purple content panel (right). The lavender field fills the whole
+     left side; the laptop stays centred and fully visible within it. */
+  @media (min-width: 1024px) {
+    .bento-card--wide .bento-card-link {
+      flex-direction: row;
+      align-items: stretch;
+    }
+
+    .bento-card--wide .bento-card-media {
+      aspect-ratio: auto;
+      width: 56%;
+      min-height: 260px;
+      flex: 0 0 56%;
+      align-self: stretch;
+    }
+
+    .bento-card--wide .bento-card-body {
+      width: 44%;
+      justify-content: center;
+    }
+
+    .bento-card--wide .bento-card-desc {
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .bento-card--wide .bento-card-desc {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 5;
+      line-clamp: 5;
+      overflow: hidden;
+    }
+  }
+
+  /* Small — compact top-right tile */
+  .bento-card--small .bento-card-body {
+    padding: 1.15rem 1.35rem 1.35rem;
+  }
+
+  /* --- Intro / highlight tile --------------------------------------------- */
+  .bento-intro {
+    position: relative;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 22px;
+    padding: 1.85rem;
+    color: #10120f;
+    background:
+      radial-gradient(
+        circle at 85% 12%,
+        rgba(255, 255, 255, 0.5),
+        transparent 45%
+      ),
+      linear-gradient(150deg, #c9e6d6 0%, #9dbfae 55%, #8ab3a0 100%);
+    border: 1px solid rgba(16, 18, 15, 0.08);
+    overflow: hidden;
+  }
+
+  .bento-intro-eyebrow {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(16, 18, 15, 0.62);
+  }
+
+  .bento-intro-title {
+    margin-top: 0.6rem;
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: clamp(1.9rem, 1.4vw + 1.4rem, 2.9rem);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    color: #10120f;
+  }
+
+  .bento-intro-copy {
+    margin-top: 0.9rem;
+    max-width: 32ch;
+    font-family: var(--font-sans);
+    font-size: 0.98rem;
+    line-height: 1.6;
+    color: rgba(16, 18, 15, 0.78);
+  }
+
+  .bento-intro-meta {
+    margin-top: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: rgba(16, 18, 15, 0.6);
+  }
+
+  /* Mobile-carousel wrapper. On tablet/desktop it is `display: contents`, so
+     the project cards flow back into the bento grid. Dots stay hidden there. */
+  .bento-carousel {
+    display: contents;
+  }
+
+  .bento-dots {
+    display: none;
+  }
+
+  .bento-mobile-heading {
+    margin: 0 0 1.15rem;
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: 2rem;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: var(--foreground);
+  }
+
+  /* ======================================================================
+     MOBILE ONLY (< 640px, below the tablet breakpoint): turn the project
+     cards into a native, scroll-snapping horizontal carousel that shows the
+     centred card with a peek of the previous/next cards. Card design,
+     content, colours, type and rounded corners are all unchanged.
+     Tablet (>=640px) and desktop layouts are left completely untouched.
+     ====================================================================== */
+  @media (max-width: 639px) {
+    /* Full-bleed horizontal scroller with centre snapping + hidden scrollbar. */
+    .bento-carousel {
+      display: flex;
+      gap: 16px;
+      /* break out of the container padding so neighbours peek at the edges */
+      width: 100vw;
+      margin-inline: calc(50% - 50vw);
+      /* 82vw card => (100 - 82) / 2 = 9vw side padding centres first/last */
+      padding-inline: 9vw;
+      scroll-padding-inline: 9vw;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .bento-carousel::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Every card: identical width + height, snaps to centre. Equal heights
+       come from the flex row stretching all cards to the tallest one. */
+    .bento-card {
+      flex: 0 0 82vw;
+      width: 82vw;
+      min-height: 25rem;
+      scroll-snap-align: center;
+    }
+
+    /* No hover interactions on touch — keep the native carousel feel and
+       avoid "sticky hover" shifting a card after a tap. */
+    .bento-card:hover {
       transform: none;
+      border-color: rgba(255, 255, 255, 0.09);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
+    }
+
+    .bento-card:hover .bento-card-glow {
+      opacity: 0;
+    }
+
+    .bento-card-link {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    /* Identical media height for every card, regardless of the source image
+       aspect ratio. Images fill the area; laptops keep their contain fit on
+       their colour field, photo/phone mockups cover. */
+    .bento-card .bento-card-media {
+      aspect-ratio: 16 / 10;
+      min-height: 0;
+      flex: 0 0 auto;
+    }
+
+    .bento-card .service-card-image {
+      object-position: center center;
+    }
+
+    /* Content section: fixed flex structure, CTA pinned to the bottom so the
+       number/title/category (top) and CTA (bottom) align across all cards. */
+    .bento-card .bento-card-body {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      padding: 1.15rem 1.25rem 1.3rem;
+    }
+
+    /* Flex gap drives spacing — neutralise the desktop utility margins. */
+    .bento-card .bento-card-title,
+    .bento-card .bento-card-category,
+    .bento-card .bento-card-cta {
+      margin-top: 0;
+    }
+
+    .bento-card .bento-card-num {
+      font-size: 0.8rem;
+      letter-spacing: 0.18em;
+    }
+
+    /* Reserve a fixed 2-line title area on EVERY card (even 1-line titles),
+       and clamp longer titles to 2 lines. */
+    .bento-card .bento-card-title {
+      font-size: 1.3rem;
+      line-height: 1.18;
+      min-height: calc(1.3rem * 1.18 * 2);
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      overflow: hidden;
+    }
+
+    /* Single-line category, kept to one line so it never shifts alignment. */
+    .bento-card .bento-card-category {
+      font-size: 0.9rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Compact mobile card — no paragraph description. */
+    .bento-card .bento-card-desc {
+      display: none;
+    }
+
+    /* CTA sits at the same bottom position on every card. */
+    .bento-card .bento-card-cta {
+      margin-top: auto;
+      font-size: 0.8rem;
+    }
+
+    /* Pagination indicator — active dot tracks the centred card. */
+    .bento-dots {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1.25rem;
+    }
+
+    .bento-dot {
+      width: 7px;
+      height: 7px;
+      padding: 0;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(244, 239, 228, 0.28);
+      transition: width 0.3s ease, background-color 0.3s ease;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .bento-dot.is-active {
+      width: 22px;
+      background: rgba(244, 239, 228, 0.9);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bento-card,
+    .bento-card:hover {
+      transform: none;
+      transition: border-color 300ms ease, box-shadow 300ms ease;
     }
 
     .service-card-image,
-    .service-card:hover .service-card-image {
+    .bento-card:hover .service-card-image {
       transform: scale(1.02);
       transition: none;
+    }
+
+    .bento-card-glow {
+      display: none;
     }
   }
 

@@ -1,85 +1,142 @@
-"use client";
-
+import type { CSSProperties } from "react";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { projects } from "../lib/projects";
 import { Reveal } from "./Reveal";
 import { ProjectScreenPreview } from "./ProjectScreenPreview";
+import { FeaturedCarousel } from "./FeaturedCarousel";
 
-const FEATURED_SLUGS = [
-  "virtual-field-tour",
-  "farmer-wallet",
-  "buyer-web-app",
-  "pet-walking-app",
-] as const;
+type Variant = "featured" | "medium" | "wide" | "small";
 
-const FEATURED_META: Record<
-  (typeof FEATURED_SLUGS)[number],
-  { number: string; category: string }
-> = {
-  "virtual-field-tour": {
-    number: "01",
-    category: "Immersive Experience · Climate Tech",
-  },
-  "farmer-wallet": { number: "02", category: "Product Design · Mobile App" },
-  "buyer-web-app": { number: "03", category: "Product Design · Dashboard" },
-  "pet-walking-app": { number: "04", category: "Product Design · Mobile App" },
+type Theme = {
+  from: string;
+  to: string;
+  glow: string;
+  ink: string;
+  sub: string;
 };
 
-function ScrollArrow({
-  direction,
-  disabled,
-  onClick,
-}: {
-  direction: "left" | "right";
-  disabled: boolean;
-  onClick: () => void;
-}) {
-  const Icon = direction === "left" ? ChevronLeft : ChevronRight;
+type ProjectItem = {
+  slug: string;
+  number: string;
+  category: string;
+  variant: Variant;
+  /** grid-area name used by the tablet/desktop bento layout */
+  area: string;
+  /** short supporting copy shown on the larger tiles */
+  blurb?: string;
+  theme: Theme;
+};
 
-  return (
-    <button
-      type="button"
-      aria-label={`Scroll projects ${direction}`}
-      disabled={disabled}
-      onClick={onClick}
-      className={`service-scroll-btn surface-control grid h-11 w-11 place-items-center rounded-full transition-all duration-300 ${
-        disabled
-          ? "cursor-default text-muted/30 opacity-40"
-          : "text-foreground"
-      }`}
-    >
-      <Icon className="h-5 w-5" strokeWidth={1.5} />
-    </button>
-  );
+const PROJECT_ITEMS: ProjectItem[] = [
+  {
+    slug: "virtual-field-tour",
+    number: "01",
+    category: "Immersive Experience · Climate Tech",
+    variant: "featured",
+    area: "featured",
+    blurb:
+      "A virtual storytelling experience that helps buyers understand carbon projects in action.",
+    theme: {
+      from: "#17624f",
+      to: "#0a2f28",
+      glow: "#3fe3d3",
+      ink: "#eefef9",
+      sub: "#9fd8cb",
+    },
+  },
+  {
+    slug: "farmer-wallet",
+    number: "02",
+    category: "Product Design · Mobile App",
+    variant: "medium",
+    area: "farmer",
+    theme: {
+      from: "#25459c",
+      to: "#111f4b",
+      glow: "#93c5fd",
+      ink: "#eef4ff",
+      sub: "#aec3ec",
+    },
+  },
+  {
+    slug: "buyer-web-app",
+    number: "03",
+    category: "Product Design · Dashboard",
+    variant: "wide",
+    area: "buyer",
+    blurb:
+      "An end-to-end purchasing experience that turns a fragmented buying journey into clarity, confidence, and control.",
+    theme: {
+      from: "#5d29b4",
+      to: "#431c93",
+      glow: "#d6c7ff",
+      ink: "#f5f0ff",
+      sub: "#cabbf0",
+    },
+  },
+  {
+    slug: "pet-walking-app",
+    number: "04",
+    category: "Product Design · Mobile App",
+    variant: "small",
+    area: "project4",
+    theme: {
+      from: "#a23c14",
+      to: "#4a1c0b",
+      glow: "#fdba74",
+      ink: "#fff3e9",
+      sub: "#f0c6a3",
+    },
+  },
+];
+
+function tileStyle(item: ProjectItem): CSSProperties {
+  return {
+    ["--bento-area" as string]: item.area,
+    ["--tile-from" as string]: item.theme.from,
+    ["--tile-to" as string]: item.theme.to,
+    ["--tile-glow" as string]: item.theme.glow,
+    ["--tile-ink" as string]: item.theme.ink,
+    ["--tile-sub" as string]: item.theme.sub,
+  } as CSSProperties;
 }
 
-function ProjectCard({ slug }: { slug: (typeof FEATURED_SLUGS)[number] }) {
-  const project = projects.find((p) => p.slug === slug);
+function BentoCard({ item }: { item: ProjectItem }) {
+  const project = projects.find((p) => p.slug === item.slug);
   if (!project) return null;
 
-  const category = FEATURED_META[slug].category;
-  const number = FEATURED_META[slug].number;
-
   return (
-    <article className="service-card group flex h-full shrink-0 flex-col">
-      <Link href={`/work/${project.slug}`} className="flex h-full min-h-0 flex-col">
-        <div className="service-card-image-wrap">
-          <div className="service-card-preview">
-            <ProjectScreenPreview project={project} variant="desktop" />
+    <article
+      className={`bento-card bento-card--${item.variant} group`}
+      style={tileStyle(item)}
+    >
+      <Link
+        href={`/work/${project.slug}`}
+        aria-label={`View case study: ${project.title}`}
+        className="bento-card-link"
+      >
+        <div className="bento-card-media">
+          <div className="bento-card-preview">
+            <ProjectScreenPreview
+              project={project}
+              variant="desktop"
+              fit={
+                item.variant === "featured" || item.variant === "wide"
+                  ? "contain"
+                  : "cover"
+              }
+            />
           </div>
+          <span className="bento-card-glow" aria-hidden />
         </div>
 
-        <div className="service-card-body flex flex-1 flex-col p-6 sm:p-7">
-          <span className="type-label text-muted">{number}</span>
-          <h3 className="type-card-title service-card-title mt-3 text-foreground">
-            {project.title}
-          </h3>
-          <p className="type-body service-card-category mt-3 flex-1">
-            {category}
-          </p>
-          <span className="type-btn link-subtle mt-5 inline-flex items-center gap-1">
+        <div className="bento-card-body">
+          <span className="bento-card-num">{item.number}</span>
+          <h3 className="bento-card-title mt-4">{project.title}</h3>
+          <p className="bento-card-category mt-3">{item.category}</p>
+          {item.blurb && <p className="bento-card-desc mt-4">{item.blurb}</p>}
+          <span className="bento-card-cta mt-6 inline-flex items-center gap-1.5">
             View Case Study
             <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </span>
@@ -89,88 +146,40 @@ function ProjectCard({ slug }: { slug: (typeof FEATURED_SLUGS)[number] }) {
   );
 }
 
-export function FeaturedProjects() {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
-
-  const updateScrollState = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    const { scrollLeft, scrollWidth, clientWidth } = el;
-    setCanScrollLeft(scrollLeft > 4);
-    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 4);
-  }, []);
-
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    updateScrollState();
-
-    el.addEventListener("scroll", updateScrollState, { passive: true });
-    window.addEventListener("resize", updateScrollState);
-
-    return () => {
-      el.removeEventListener("scroll", updateScrollState);
-      window.removeEventListener("resize", updateScrollState);
-    };
-  }, [updateScrollState]);
-
-  const scrollByCard = (direction: "left" | "right") => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    const card = el.querySelector<HTMLElement>(".service-card");
-    const gap = 28;
-    const distance = (card?.offsetWidth ?? 450) + gap;
-
-    el.scrollBy({
-      left: direction === "left" ? -distance : distance,
-      behavior: "smooth",
-    });
-  };
-
+function IntroTile() {
   return (
-    <section id="work" className="section-pad scroll-mt-16 overflow-hidden">
-      <div className="container-shell">
-        <div className="section-header flex items-end justify-between gap-6">
-          <Reveal y={32} className="max-w-3xl">
-            <p className="type-section-label">Selected Work</p>
-            <h2 className="type-section-title mt-4 text-balance text-foreground">
-              Featured Projects
-            </h2>
-            <p className="type-body-lg mt-5 max-w-2xl">
-              A selection of product, climate-tech, and experience design
-              projects.
-            </p>
-          </Reveal>
-
-          <div className="hidden shrink-0 gap-3 md:flex">
-            <ScrollArrow
-              direction="left"
-              disabled={!canScrollLeft}
-              onClick={() => scrollByCard("left")}
-            />
-            <ScrollArrow
-              direction="right"
-              disabled={!canScrollRight}
-              onClick={() => scrollByCard("right")}
-            />
-          </div>
-        </div>
+    <div
+      className="bento-intro hidden sm:flex"
+      style={{ ["--bento-area" as string]: "intro" } as CSSProperties}
+    >
+      <p className="bento-intro-eyebrow">Selected Work</p>
+      <h2 className="bento-intro-title">Featured Projects</h2>
+      <p className="bento-intro-copy">
+        A selection of product, climate-tech, and experience design projects —
+        each one a story of turning complexity into something clear and human.
+      </p>
+      <div className="bento-intro-meta">
+        <span>4 case studies</span>
+        <span aria-hidden>·</span>
+        <span>2024 — 2025</span>
       </div>
+    </div>
+  );
+}
 
-      <div className="services-scroll-outer">
-        <div
-          ref={scrollRef}
-          className="services-scroll-track flex items-stretch gap-7 overflow-x-auto scroll-smooth pb-2"
-        >
-          {FEATURED_SLUGS.map((slug) => (
-            <ProjectCard key={slug} slug={slug} />
-          ))}
-        </div>
+export function FeaturedProjects() {
+  return (
+    <section id="work" className="section-pad scroll-mt-16">
+      <div className="container-shell">
+        <Reveal y={40} className="bento-grid">
+          <h2 className="bento-mobile-heading sm:hidden">Featured Projects</h2>
+          <IntroTile />
+          <FeaturedCarousel count={PROJECT_ITEMS.length}>
+            {PROJECT_ITEMS.map((item) => (
+              <BentoCard key={item.slug} item={item} />
+            ))}
+          </FeaturedCarousel>
+        </Reveal>
       </div>
     </section>
   );

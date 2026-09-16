@@ -46,3 +46,9 @@ next-env.d.ts
 __pycache__/
 *.pyc
 .DS_Store
+
+# local Playwright browsers and helper scripts
+.pw-browsers/
+_cut.mjs
+_shot.mjs
+_diag.mjs

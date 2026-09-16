@@ -359,30 +359,6 @@
     text-align: left;
   }
 
-  /* Featured projects — stack cards */
-  #work .services-scroll-outer {
-    padding-left: 1.75rem;
-    padding-right: 1.75rem;
-  }
-
-  #work .services-scroll-track {
-    flex-direction: column;
-    overflow-x: visible;
-    gap: 1.5rem;
-    scroll-padding-left: 0;
-  }
-
-  #work .service-card {
-    width: 100%;
-    max-width: 100%;
-    flex-shrink: 0;
-    height: auto;
-  }
-
-  #work .service-card-image-wrap {
-    height: min(340px, 56vw);
-  }
-
   /* Contact — stack portrait and copy */
   .contact-landscape-content {
     min-height: 0;
@@ -516,11 +492,6 @@
 
   .case-study-meta-grid {
     grid-template-columns: 1fr;
-  }
-
-  #work .services-scroll-outer {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
   }
 }
 
