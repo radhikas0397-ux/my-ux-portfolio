@@ -59,5 +59,5 @@ plus a reusable case study template at `/work/[slug]` for each project
 - **Colors, fonts, glow:** edit the tokens at the top of `app/globals.css`.
 - **Real images:** the large gradient placeholders live in `ProjectCard.tsx` and
   the case study hero — swap them for `next/image` when assets are ready.
-- **Resume:** replace `public/resume.pdf`.
+- **Resume:** replace `public/resume/radhika-sharma-resume.pdf`.
 ```

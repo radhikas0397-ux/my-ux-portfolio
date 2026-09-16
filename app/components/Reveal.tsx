@@ -2,11 +2,16 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import type { ReactNode } from "react";
+import {
+  defaultViewport,
+  fadeUp,
+  staggerContainer,
+  staggerItem,
+} from "../lib/scrollAnimations";
 
 type RevealProps = {
   children: ReactNode;
   className?: string;
-  /** stagger delay in seconds */
   delay?: number;
   y?: number;
   once?: boolean;
@@ -17,25 +22,24 @@ export function Reveal({
   children,
   className,
   delay = 0,
-  y = 24,
+  y = 40,
   once = true,
   as = "div",
 }: RevealProps) {
   const reduce = useReducedMotion();
-
-  const variants: Variants = {
-    hidden: { opacity: 0, y: reduce ? 0 : y },
+  const base = fadeUp(reduce, y);
+  const variants = {
+    hidden: base.hidden,
     show: {
-      opacity: 1,
-      y: 0,
+      ...base.show,
       transition: {
-        duration: 0.7,
+        ...(typeof base.show === "object" && "transition" in base.show
+          ? base.show.transition
+          : {}),
         delay,
-        ease: [0.21, 0.47, 0.32, 0.98],
       },
     },
   };
-
   const MotionTag = motion[as];
 
   return (
@@ -44,19 +48,18 @@ export function Reveal({
       variants={variants}
       initial="hidden"
       whileInView="show"
-      viewport={{ once, margin: "-80px" }}
+      viewport={{ ...defaultViewport, once }}
     >
       {children}
     </MotionTag>
   );
 }
 
-/** Wraps children and staggers their reveal. Use with <Reveal> or motion children. */
 export function StaggerGroup({
   children,
   className,
   delay = 0,
-  stagger = 0.08,
+  stagger = 0.12,
   once = true,
 }: {
   children: ReactNode;
@@ -65,31 +68,43 @@ export function StaggerGroup({
   stagger?: number;
   once?: boolean;
 }) {
-  const variants: Variants = {
-    hidden: {},
-    show: {
-      transition: { staggerChildren: stagger, delayChildren: delay },
-    },
-  };
-
   return (
     <motion.div
       className={className}
-      variants={variants}
+      variants={staggerContainer(stagger, delay)}
       initial="hidden"
       whileInView="show"
-      viewport={{ once, margin: "-80px" }}
+      viewport={{ ...defaultViewport, once }}
     >
       {children}
     </motion.div>
   );
 }
 
+export function StaggerItem({
+  children,
+  className,
+  y = 32,
+}: {
+  children: ReactNode;
+  className?: string;
+  y?: number;
+}) {
+  const reduce = useReducedMotion();
+
+  return (
+    <motion.div className={className} variants={staggerItem(reduce, y)}>
+      {children}
+    </motion.div>
+  );
+}
+
+/** @deprecated Use staggerItem via StaggerItem or import from scrollAnimations */
 export const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 32 },
   show: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: [0.21, 0.47, 0.32, 0.98] },
+    transition: { duration: 0.65, ease: [0.21, 0.47, 0.32, 0.98] },
   },
 };

@@ -39,3 +39,16 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local caches and Python virtual environments
+.cache/
+.venv-inpaint/
+__pycache__/
+*.pyc
+.DS_Store
+
+# local Playwright browsers and helper scripts
+.pw-browsers/
+_cut.mjs
+_shot.mjs
+_diag.mjs

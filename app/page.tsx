@@ -1,25 +1,21 @@
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
-import { CursorGlow } from "./components/CursorGlow";
 import { Hero } from "./components/Hero";
 import { About } from "./components/About";
-import { SelectedWork } from "./components/SelectedWork";
-import { Process } from "./components/Process";
-import { Skills } from "./components/Skills";
-import { Contact } from "./components/Contact";
+import { Services } from "./components/Services";
+import { FeaturedProjects } from "./components/FeaturedProjects";
+import { ContactCTA } from "./components/ContactCTA";
 
 export default function Home() {
   return (
     <>
-      <CursorGlow />
       <Navbar />
       <main>
         <Hero />
         <About />
-        <SelectedWork />
-        <Process />
-        <Skills />
-        <Contact />
+        <FeaturedProjects />
+        <Services />
+        <ContactCTA />
       </main>
       <Footer />
     </>

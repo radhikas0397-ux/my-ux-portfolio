@@ -1,57 +1,43 @@
+"use client";
+
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
 import { site } from "../lib/site";
 
 export function Footer() {
+  const reduced = useReducedMotion() ?? false;
+
   return (
-    <footer className="border-t border-line">
-      <div className="container-shell py-12">
-        <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
-          <div>
-            <p className="font-display text-lg font-semibold tracking-tight">
-              {site.name}
-            </p>
-            <p className="mt-1 text-sm text-faint">
-              {site.role} · {site.location}
-            </p>
-          </div>
+    <footer className="footer-premium relative overflow-hidden border-t border-[var(--border-subtle)]">
+      <div aria-hidden className="footer-premium-atmosphere absolute inset-0" />
+      <motion.div
+        aria-hidden
+        className="footer-premium-line absolute left-1/2 top-0 h-px w-[min(92%,720px)] -translate-x-1/2 bg-gradient-to-r from-transparent via-foreground/20 to-transparent"
+        animate={reduced ? undefined : { opacity: [0.35, 0.75, 0.35] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+      />
 
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
-            <a
-              href={`mailto:${site.email}`}
-              className="group inline-flex items-center gap-1 text-muted transition-colors hover:text-foreground"
-            >
-              Email
-              <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </a>
-            <a
-              href={site.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group inline-flex items-center gap-1 text-muted transition-colors hover:text-foreground"
-            >
-              LinkedIn
-              <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </a>
-            <a
-              href={site.resume}
-              className="group inline-flex items-center gap-1 text-muted transition-colors hover:text-foreground"
-            >
-              Resume
-              <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </a>
-            <Link
-              href="/#work"
-              className="text-muted transition-colors hover:text-foreground"
-            >
-              Work
-            </Link>
-          </div>
-        </div>
+      <div className="container-shell relative z-10 py-10 sm:py-12">
+        <div className="flex flex-col items-center gap-6 text-center md:flex-row md:items-center md:justify-between md:gap-8 md:text-left">
+          <Link
+            href="/#home"
+            aria-label="Home"
+            className="group inline-flex items-center gap-3"
+          >
+            <span className="navbar-logo type-caption grid h-10 w-10 place-items-center rounded-full font-semibold normal-case tracking-normal">
+              RS
+            </span>
+            <span className="hidden sm:block">
+              <span className="type-nav block text-foreground">{site.name}</span>
+              <span className="type-caption mt-0.5 block normal-case tracking-normal text-muted">
+                {site.role}
+              </span>
+            </span>
+          </Link>
 
-        <div className="mt-10 flex flex-col items-start justify-between gap-2 border-t border-line pt-6 text-xs text-faint sm:flex-row sm:items-center">
-          <p>© {new Date().getFullYear()} {site.name}. All rights reserved.</p>
-          <p>Designed &amp; built with care.</p>
+          <p className="type-caption normal-case tracking-normal text-muted md:text-right">
+            © {new Date().getFullYear()} {site.name}. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>

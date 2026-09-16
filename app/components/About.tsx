@@ -1,81 +1,99 @@
-import {
-  Search,
-  Lightbulb,
-  Palette,
-  TrendingUp,
-  type LucideIcon,
-} from "lucide-react";
-import { Reveal } from "./Reveal";
-import { SectionLabel } from "./SectionHeading";
+"use client";
 
-const pillars: { title: string; desc: string; Icon: LucideIcon }[] = [
-  {
-    title: "User Research",
-    desc: "Understanding real user needs.",
-    Icon: Search,
-  },
-  {
-    title: "Product Thinking",
-    desc: "Aligning design with goals.",
-    Icon: Lightbulb,
-  },
-  {
-    title: "Visual Design",
-    desc: "Crafting clear, elegant interfaces.",
-    Icon: Palette,
-  },
-  {
-    title: "Business Understanding",
-    desc: "Designing for measurable impact.",
-    Icon: TrendingUp,
-  },
-];
+import { useState } from "react";
+import Image from "next/image";
+import { Reveal, StaggerGroup, StaggerItem } from "./Reveal";
+
+const ABOUT_ILLUSTRATION = "/images/about-me-study-landscape.jpg";
+
+const PILLARS = [
+  "User Research",
+  "Product Thinking",
+  "Visual Design",
+  "Business Impact",
+] as const;
 
 export function About() {
-  return (
-    <section id="about" className="relative scroll-mt-24 py-20 sm:py-28">
-      <div className="mx-auto w-full max-w-[1400px] px-5 sm:px-10 lg:px-20">
-        {/* centered intro */}
-        <div className="flex flex-col items-center text-center">
-          <Reveal className="flex justify-center">
-            <SectionLabel>About</SectionLabel>
-          </Reveal>
+  const [activeTopic, setActiveTopic] = useState<(typeof PILLARS)[number]>(
+    PILLARS[0],
+  );
 
-          <Reveal delay={0.05}>
-            <figure className="mx-auto mt-8 max-w-[1000px]">
-              <blockquote className="font-display text-[1.9rem] leading-[1.25] font-medium tracking-tight text-balance text-white sm:text-4xl sm:leading-[1.2] md:text-[3.1rem] md:leading-[1.15]">
-                &ldquo;If your only tool is a hammer, all your problems will be
-                nails.&rdquo;
-              </blockquote>
-              <figcaption className="mt-6 text-sm font-medium text-faint">
-                — Rolf Dobelli
-              </figcaption>
-            </figure>
-          </Reveal>
+  return (
+    <section id="about" className="section-pad scroll-mt-16">
+      <div className="container-shell">
+        <div className="about-section-inner">
+          <div className="about-text-column flex flex-col">
+            <Reveal y={36}>
+              <h2 className="type-section-title">
+                The mindset behind every product I design.
+              </h2>
+            </Reveal>
+
+            <Reveal delay={0.08} y={32}>
+              <p className="type-body about-body-block">
+                Great design isn&apos;t just about beautiful interfaces. It starts
+                with understanding people, asking better questions, and making
+                complex problems feel simple.
+              </p>
+            </Reveal>
+
+            <Reveal delay={0.12} y={28}>
+              <div className="type-body about-body-block">
+                <p>
+                  I&apos;m Radhika, a Product Designer with a background in
+                  Psychology and experience designing products in climate tech.
+                </p>
+                <p>
+                  I enjoy turning complex systems into experiences that feel
+                  intuitive and effortless. My approach combines research, product
+                  thinking, business understanding, and visual design to create
+                  solutions that are both useful and meaningful.
+                </p>
+              </div>
+            </Reveal>
+          </div>
+
+          <div className="about-image-column">
+            <Reveal
+              delay={0.1}
+              y={32}
+              className="about-image-reveal w-full min-h-0"
+            >
+              <div className="about-illustration-card relative aspect-[4/3] min-h-[360px] overflow-hidden lg:aspect-auto lg:h-full lg:min-h-0">
+                <Image
+                  src={ABOUT_ILLUSTRATION}
+                  alt="Designer studying and working on a UI and UX project"
+                  fill
+                  quality={100}
+                  sizes="(max-width: 1024px) 100vw, 45vw"
+                  className="about-illustration-image object-cover object-center"
+                />
+              </div>
+            </Reveal>
+          </div>
         </div>
 
-        {/* centered skill grid */}
-        <Reveal delay={0.12}>
-          <ul className="mx-auto mt-12 grid max-w-[1000px] grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {pillars.map(({ title, desc, Icon }) => (
-              <li
-                key={title}
-                className="group rounded-[24px] border border-white/10 bg-white/[0.04] p-6 backdrop-blur-md transition-all duration-300 hover:-translate-y-1.5 hover:border-teal-400/30 hover:bg-white/[0.06] hover:shadow-[0_26px_60px_-24px_rgba(45,212,191,0.4)]"
-              >
-                {/* 3D-style icon tile */}
-                <span className="grid h-14 w-14 place-items-center rounded-2xl border border-white/15 bg-gradient-to-br from-teal-400/30 to-emerald-500/10 text-teal-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_12px_28px_-12px_rgba(45,212,191,0.6)] transition-transform duration-300 group-hover:scale-105">
-                  <Icon className="h-6 w-6" />
-                </span>
-                <h3 className="mt-5 font-display text-lg font-semibold tracking-tight">
-                  {title}
-                </h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-muted">
-                  {desc}
-                </p>
-              </li>
+        <StaggerGroup
+          className="mt-[var(--space-in-section)] lg:mt-[var(--space-in-section-md)]"
+          stagger={0.1}
+        >
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6">
+            {PILLARS.map((item) => (
+              <StaggerItem key={item}>
+                <button
+                  type="button"
+                  aria-pressed={activeTopic === item}
+                  onClick={() => setActiveTopic(item)}
+                  className={`featured-topic-chip type-ui-label ${
+                    activeTopic === item ? "is-active" : ""
+                  }`}
+                >
+                  {item}
+                </button>
+              </StaggerItem>
             ))}
-          </ul>
-        </Reveal>
+          </div>
+        </StaggerGroup>
       </div>
     </section>
   );

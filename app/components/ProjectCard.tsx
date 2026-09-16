@@ -68,19 +68,19 @@ export function ProjectCard({
         <div className="p-6 sm:p-8">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-xs font-medium tracking-wide text-faint uppercase">
+              <p className="type-section-label text-faint">
                 {project.category}
               </p>
-              <h3 className="mt-2 font-display text-2xl font-semibold tracking-tight">
+              <h3 className="type-card-title mt-2">
                 {project.title}
               </h3>
             </div>
-            <span className="mt-1 grid h-10 w-10 shrink-0 place-items-center rounded-full border border-line-strong bg-surface-2 transition-all duration-300 group-hover:border-accent/60 group-hover:bg-accent group-hover:text-background">
+            <span className="mt-1 grid h-10 w-10 shrink-0 place-items-center rounded-full border border-line-strong bg-surface-2 text-foreground transition-all duration-300 group-hover:border-border-hover group-hover:bg-foreground/5">
               <ArrowUpRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </span>
           </div>
 
-          <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
+          <p className="type-body mt-4 max-w-xl">
             {project.description}
           </p>
 
@@ -102,13 +102,13 @@ export function ProjectCard({
             </div>
             <div className="sm:text-right">
               <p className="text-xs text-faint">Outcome</p>
-              <p className="mt-0.5 text-sm font-medium text-accent-gradient">
+              <p className="mt-0.5 text-sm font-medium text-foreground">
                 {project.outcome}
               </p>
             </div>
           </div>
 
-          <div className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-foreground">
+          <div className="mt-6 inline-flex items-center gap-1.5 text-base font-medium text-foreground">
             View Case Study
             <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </div>
