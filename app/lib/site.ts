@@ -2,7 +2,7 @@ export const site = {
   name: "Radhika Sharma",
   role: "UI/UX Designer",
   email: "hello@radhikasharma.design",
-  linkedin: "https://www.linkedin.com/in/radhikasharma",
+  linkedin: "https://www.linkedin.com/in/radhika-sharma-543389167/",
   resume: "/resume/radhika-sharma-resume.pdf",
   resumeDownloadName: "Radhika-Sharma-Resume.pdf",
   resumeAriaLabel: "Open Radhika Sharma's resume as a PDF (opens in a new tab)",
